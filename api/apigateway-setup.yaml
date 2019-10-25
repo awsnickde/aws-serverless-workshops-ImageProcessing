@@ -1,0 +1,133 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Resources for Wild Ryde rider photo processing workflow.
+Outputs:
+  APIEndpoint:
+    Value: 
+      Fn::Sub: "https://${APIGateWay}.execute-api.${AWS::Region}.amazonaws.com/dev/"
+Parameters:
+  TestImagesBucket:
+    Description: S3 bucket containing the test images
+    Type: String
+Resources:
+    ApiGateWayRole:
+      Properties:
+        AssumeRolePolicyDocument:
+          Statement:
+          - Action:
+            - sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: "apigateway.amazonaws.com"
+          Version: '2012-10-17'
+        Path: /
+        Policies:
+        - PolicyDocument:
+            Statement:
+            - Action:
+              - s3:*
+              Effect: Allow
+              Resource: '*'
+              Sid: InvokeLambda
+            Version: '2012-10-17'
+          PolicyName: WriteS3
+      Type: AWS::IAM::Role
+    APIGateWay:
+      Type: "AWS::ApiGateway::RestApi"
+      Properties:
+        BinaryMediaTypes: #add or substract MIME types here
+          - multipart/form-data
+          - image/png
+          - image/jpeg
+          - image/jpg
+        Description: Storage service for Wild Ryders
+        FailOnWarnings: false
+        Name: "wildryders-api"
+
+    CORSOPTIONS:
+      Type: "AWS::ApiGateway::Method"
+      Properties:
+        ResourceId:
+          Fn::GetAtt: 
+            - "APIGateWay"
+            - "RootResourceId"
+        RestApiId:
+          Ref: "APIGateWay"
+        AuthorizationType: NONE
+        HttpMethod: OPTIONS
+        Integration:
+          Type: MOCK
+          IntegrationResponses:
+            - ResponseParameters:
+                method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+                method.response.header.Access-Control-Allow-Methods: "'GET,PUT,OPTIONS'"
+                method.response.header.Access-Control-Allow-Origin: "'*'"
+              ResponseTemplates:
+                application/json: ''
+              StatusCode: '200'
+          PassthroughBehavior: NEVER
+          RequestTemplates:
+            application/json: '{"statusCode": 200}'
+        MethodResponses:
+          - ResponseModels:
+              application/json: Empty
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: true
+              method.response.header.Access-Control-Allow-Methods: true
+              method.response.header.Access-Control-Allow-Origin: true
+            StatusCode: '200'
+    APIGateWayAnyMethod:
+      Type: "AWS::ApiGateway::Method"
+      Properties:
+        ApiKeyRequired: false
+        AuthorizationType: NONE
+        HttpMethod: PUT
+        Integration:
+          Credentials: 
+            Fn::GetAtt:
+              - ApiGateWayRole
+              - Arn
+          IntegrationHttpMethod: PUT
+          IntegrationResponses:
+            - ResponseParameters:
+                method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+                method.response.header.Access-Control-Allow-Methods: "'GET,PUT,OPTIONS'"
+                method.response.header.Access-Control-Allow-Origin: "'*'"
+              StatusCode: '200'
+          PassthroughBehavior: WHEN_NO_MATCH
+          RequestParameters:
+            integration.request.header.Accept: method.request.header.Accept
+            integration.request.header.Content-Disposition: method.request.header.Content-Disposition
+            integration.request.header.Content-Type: method.request.header.Content-Type
+            integration.request.header.x-amz-acl: method.request.header.x-amz-acl
+            integration.request.path.key: method.request.querystring.key
+          Type: AWS
+          Uri: 
+            Fn::Sub: arn:aws:apigateway:eu-west-1:s3:path/${TestImagesBucket}/{key}
+        MethodResponses:
+          - StatusCode: 200
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: true
+              method.response.header.Access-Control-Allow-Methods: true
+              method.response.header.Access-Control-Allow-Origin: true
+        RequestParameters:
+          method.request.header.Content-Disposition: false
+          method.request.header.Accept: false
+          method.request.header.Content-Type: false
+          method.request.header.x-amz-acl: false
+          method.request.querystring.key: false
+        ResourceId:
+          Fn::GetAtt: 
+            - "APIGateWay"
+            - "RootResourceId"
+        RestApiId:
+          Ref: "APIGateWay"
+    ApiGatewayDeployment:
+      Type: 'AWS::ApiGateway::Deployment'
+      Properties:
+        RestApiId:
+          Ref: "APIGateWay"
+        StageName: "dev"
+      DependsOn:
+        - APIGateWayAnyMethod
+        - CORSOPTIONS
+        - ApiGateWayRole
