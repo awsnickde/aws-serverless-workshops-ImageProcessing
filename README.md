@@ -22,7 +22,7 @@ This HTML page uses API Gateway created before to upload your jpeg images into S
 ## Exercise 2: Publish message to SNS from 
 This exercise guide how to setup direct integration with SNS without the use of Lambda functions (difficulty: moderate). The complete documentation can be found [here](https://docs.aws.amazon.com/step-functions/latest/dg/connect-sns.html).
 
-Before we begin, there are several ways to trigger SNS notifications from Step Functions. One of them is to use Lambda function, the skeleton for this function is provided in the original workshop. The second option is to trigger SNS directly from Step Functions and this exercise will should you how to do it.
+Before we begin, there are several ways to trigger SNS notifications from Step Functions. [One of them](https://aws.amazon.com/blogs/mobile/invoking-aws-lambda-functions-via-amazon-sns/) is to use Lambda function, the skeleton for this function is provided in the original workshop. The second option is to trigger SNS directly from Step Functions and this exercise will should you how to do it.
 
 1. Open AWS Console and create new SNS topic, e.g. `PhotoDoesntMeetRequirementsTopic`. Copy the ARN of the new topic to the text editor.
 2. Subscribe to the topic by opening it and clicking "Create subscription". Select email protocol and type your email. In few minutes you'll receive the email, please confirm the subscription using the link.
