@@ -1,4 +1,4 @@
-# Follow-up to aws-serverless-workshops/ImageProcessing
+# Follow-up to ImageProcessing workshop
 This repository contains additional exercises to the [AWS Serverless Workshop - Image Processing](https://github.com/aws-samples/aws-serverless-workshops/tree/master/ImageProcessing).
 
 ## Hints
