@@ -1,10 +1,10 @@
 # Follow-up to aws-serverless-workshops/ImageProcessing
-This repository contains additional excercises to the AWS Serverless Workshop - Image Processing
+This repository contains additional excercises to the [AWS Serverless Workshop - Image Processing](https://github.com/aws-samples/aws-serverless-workshops/tree/master/ImageProcessing)
 
 ## Hints
 If possible, please use `eu-west-1` region. This is necessary for the API Gateway script. (TBD)
 
-## API Gateway to push images to S3
+## Using API Gateway to push images to S3
 1. Navigate to Cloud Formation in your AWS account and click Create Stack.
 2. Find the template in `api/apigateway-setup.yaml` and upload it to Cloud Formation.
 3. Give the name for the stack and paste the S3 Bucket name that you created during the AWS Serverless Workshop - Image Processing where the photos are stored.
