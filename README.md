@@ -20,7 +20,7 @@ This HTML page uses API Gateway created before to upload your jpeg images into S
 2. You can run it locally or try running with services like [jsbin](https://jsbin.com/) to testdrive it on your smartphone.
 
 ## Exercise 2: Publish message to SNS from 
-This exercise guide how to setup direct integration with SNS without the use of Lambda functions (difficulty: moderate). The complete documentation can be found [here](https://docs.aws.amazon.com/step-functions/latest/dg/connect-sns.html)
+This exercise guide how to setup direct integration with SNS without the use of Lambda functions (difficulty: moderate). The complete documentation can be found [here](https://docs.aws.amazon.com/step-functions/latest/dg/connect-sns.html).
 1. Open AWS Console and create new SNS topic, e.g. `PhotoDoesntMeetRequirementsTopic`. Copy the ARN of the new topic to the text editor.
 2. Subscribe to the topic by opening it and clicking "Create subscription". Select email protocol and type your email. In few minutes you'll receive the email, please confirm the subscription using the link.
 4. Open AWS Console and navigate to IAM. Go to Roles and find role starting with `wildrydes-step-module-resources-StateMachineRole`. Now we need to update this role, so that the State Machine can access SNS.
@@ -55,3 +55,6 @@ Please also replace `<!!! Topic ARN !!!>` with ARN from step 1.
       },	
 ```
 7. Create new execution with the same face to test your integarion works. In few minutes you'll receive an email with an error message.
+
+## Excercise 3: Trigger State Machine execution when file is uploaded to S3.
+(difficulty: high) If you feel ready for the challenge, please check the official [documentation](https://docs.aws.amazon.com/step-functions/latest/dg/tutorial-cloudwatch-events-s3.html) and try to implement the same for your solution.
